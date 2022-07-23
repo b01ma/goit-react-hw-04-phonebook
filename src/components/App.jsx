@@ -1,4 +1,5 @@
-import { Component, useState, useEffect } from 'react/cjs/react.production.min';
+// import { Component } from 'react/cjs/react.production.min';
+import React, { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import ContactForm from './ContactForm/ContactForm';
 import { Filter } from './Filter/Filter';
@@ -6,13 +7,12 @@ import { ContactList } from './ContactList/ContactList';
 import wrapper from './App.css';
 
 export const App = () => {
-  console.log('work');
-
-  const [contacts, setContacts] = useState();
-  const [filter, setFilter] = useState();
+  const [contacts, setContacts] = useState([]);
+  const [filter, setFilter] = useState('');
 
   useEffect(() => {
     const savedContacts = JSON.parse(localStorage.getItem('contacts'));
+    // console.log('saved Contacts:', savedContacts);
 
     if (savedContacts) {
       setContacts(savedContacts);
@@ -29,11 +29,10 @@ export const App = () => {
       name,
       number,
     };
-    const updatedContacts = setContacts([...contacts, newContact]);
 
     isSameContact(name, number)
       ? alert('This contact is already exists')
-      : this.setState({ contacts: updatedContacts });
+      : setContacts(contacts => [...contacts, newContact]);
   }
 
   function isSameContact(name, number) {
@@ -53,7 +52,7 @@ export const App = () => {
     setFilter(value);
   }
 
-  function handleFilter(filter) {
+  function filteredContacts() {
     const filteredContacts = contacts.filter(contact =>
       contact.name.toLowerCase().includes(filter.toLowerCase())
     );
@@ -71,10 +70,7 @@ export const App = () => {
       <Filter onChange={handleFilterChange} value={filter} />
 
       {contacts && (
-        <ContactList
-          contacts={handleFilter(this.state.filter)}
-          onDelete={deleteContact}
-        />
+        <ContactList contacts={filteredContacts()} onDelete={deleteContact} />
       )}
     </div>
   );
